@@ -1,0 +1,26 @@
+;; shadow-cljs configuration
+{:deps true
+
+ ;; Set nREPL port for consistency
+ :nrepl {:port 4342}
+
+ :builds
+ {:app {:target     :browser
+        :modules    {:main {:entries [tiles.core]}}
+        :release    {:output-dir "public/js/compiled/min"
+                     :asset-path "/js/compiled/min"}
+        :devtools   {:loader-mode :eval
+                     :http-root   "public"
+                     :http-host   "localhost"
+                     :http-port   3449
+                     :after-load  tiles.core/init}
+        :js-options {:js-provider :shadow
+                     :resolve     {"object.assign" {:target  :npm
+                                                    :require "object-assign"}}}}
+
+  :test {:target     :browser-test
+         :test-dir   "out/test"
+         :devtools   {:http-port 8606
+                      :http-root "out/test"}
+         :js-options {:resolve {"object.assign" {:target  :npm
+                                                 :require "object-assign"}}}}}}
