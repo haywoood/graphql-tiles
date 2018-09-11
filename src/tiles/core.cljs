@@ -2,17 +2,20 @@
   (:require [re-frame.core :as rf]
             [reagent.core :as r]
             [tiles.store :as s]
+            [tiles.views.board :refer [board]]
             [tiles.views.legend :refer [legend]]
-            [tiles.views.board :refer [board]]))
+            [tiles.views.tools :refer [tools]]))
 
-(defn tiles-root []
+(defn tiles-root
+  "Main component"
+  []
   [:div {:style {:display         "flex"
                  :flex            1
                  :flex-direction  "column"
                  :align-items     "center"
                  :justify-content "center"}}
-   [:div {:style {:flex    1
-                  :display "flex"}}
+   [tools]
+   [:div {:style {:flex 1 :display "flex"}}
     [board]]
    [legend]])
 

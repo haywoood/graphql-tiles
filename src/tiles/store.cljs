@@ -3,6 +3,8 @@
             [artemis.document :as d]
             [artemis.stores.mapgraph.core :as mgs]
             [artemis.stores.mapgraph.read :as mgr]
+            [day8.re-frame.undo :as undo :refer [undoable]]
+            [debux.cs.core :refer-macros [clog]]
             [re-frame.core :as rf]))
 
 (defn gen-slug []
@@ -32,10 +34,11 @@
    {:__typename "Tile" :slug (gen-slug) :backgroundColor "#f7f7f7" :color "#009e4c"}
    {:__typename "Tile" :slug (gen-slug) :backgroundColor "#e04696" :color "#9c2c4b"}])
 
-(def blank-board
+(defn blank-board
   "This is the initial blank board"
+  []
   {:__typename "Board"
-   :slug       "blank"
+   :slug       (gen-slug)
    :rows       (vec (repeatedly 8
                                 (fn []
                                   {:__typename "Row"
@@ -45,6 +48,11 @@
                                                              {:__typename "RowTile"
                                                               :slug       (gen-slug)
                                                               :tile       blank-tile}))})))})
+
+(defn new-blank-board
+  "Helper used to create a new board with a unique slug"
+  []
+  (assoc (blank-board) :slug (gen-slug)))
 
 (defn id-fn
   "Our ID function used by artemis to normalize whatever entity it comes across
@@ -62,7 +70,16 @@
 (rf/reg-sub :store :store)
 
 (rf/reg-event-db
+ :update-store
+ (undoable "manual store update")
+ (fn [db [_ fn]]
+   "Escape hatch when we bump into limitations of artemis.
+   Like manually push a ref onto the boards vector"
+   (update db :store fn)))
+
+(rf/reg-event-db
  :write-fragment
+ (undoable "write fragment")
  (fn [db [_ data query-fragment entity-ref]]
    "Update an entity in the store by targeting the ref directly"
    (update db :store (fn [store]
@@ -73,6 +90,7 @@
 
 (rf/reg-event-db
  :write
+ (undoable "write query")
  (fn [db [_ data query-doc vars]]
    "Update the local store based on a GraphQL query"
    (update db :store (fn [store]
@@ -95,7 +113,8 @@
 (rf/reg-event-db
  :initialize
  (fn [_ _]
-   (let [store (->
+   (let [default-board (blank-board)
+         store (->
                 ;; Thread the store through bootstrapping writes
                 (a/store client)
 
@@ -116,8 +135,8 @@
                          {})
 
                 ;; write the default board
-                (a/write {:data {:boards [blank-board]
-                                 :currentBoard blank-board}}
+                (a/write {:data {:boards [default-board]
+                                 :currentBoard (select-keys default-board [:slug])}}
                          (d/parse-document "{currentBoard {__typename
                                                             slug
                                                             rows {
@@ -142,11 +161,3 @@
 
      ;; Initial app-db with normalized data graph
      {:store store})))
-
-(comment
-  ;; repl testing
-  (-> @(rf/subscribe [:store])
-      (get :entities)
-      (get "root"))
-  @(rf/subscribe [:pull [:slug :__typename {:tiles [:color]}] "legend"])
-  @(rf/subscribe [:read tile-query]))

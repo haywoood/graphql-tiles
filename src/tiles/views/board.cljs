@@ -37,15 +37,22 @@
 
 (defn board []
   (let [{:keys [legend currentBoard]} @(rf/subscribe [:read board-query])]
-    [:div {:style {:display "flex"
-                   :flex-direction "column"
-                   :justify-content "center"}}
-     (for [row (:rows currentBoard)]
-       ^{:key (:slug row)}
-       [:div {:style {:display "flex"}}
-        (for [row-tile (:rowTiles row)]
-          ^{:key (:slug row-tile)}
-          [tile {:on-click         #(handle-click (:slug row-tile)
-                                                  (-> legend :selected :slug))
-                 :color            (-> row-tile :tile :color)
-                 :background-color (-> row-tile :tile :backgroundColor)}])])]))
+    [:div
+     [:div {:style {:display         "flex"
+                    :justify-content "flex-end"}}
+      [:div {:on-click #(rf/dispatch [:undo])}
+       "←"]
+      [:div {:on-click #(rf/dispatch [:redo])}
+       "→"]]
+     [:div {:style {:display         "flex"
+                    :flex-direction  "column"
+                    :justify-content "center"}}
+      (for [row (:rows currentBoard)]
+        ^{:key (:slug row)}
+        [:div {:style {:display "flex"}}
+         (for [row-tile (:rowTiles row)]
+           ^{:key (:slug row-tile)}
+           [tile {:on-click         #(handle-click (:slug row-tile)
+                                                   (-> legend :selected :slug))
+                  :color            (-> row-tile :tile :color)
+                  :background-color (-> row-tile :tile :backgroundColor)}])])]]))
