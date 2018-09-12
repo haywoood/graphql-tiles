@@ -25,17 +25,10 @@
   ;; capture global keys for undo/redo
   keybind                   {:mvn/version "2.2.0"}
 
-  ;; random words
-  hazard                    {:mvn/version "0.3.0"}
-
   ;; trace debugging
   philoskim/debux           {:mvn/version "0.4.8"}}
 
  :aliases
  {:piggieback
   {:extra-deps
-   {cider/piggieback {:mvn/version "0.3.6"}}}
-
-  :test
-  {:extra-paths
-   ["test"]}}}
+   {cider/piggieback {:mvn/version "0.3.6"}}}}}

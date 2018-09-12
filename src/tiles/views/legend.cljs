@@ -28,8 +28,7 @@
 
 (defn legend []
   (let [{:keys [legend]} @(rf/subscribe [:read legend-query])]
-    [:div {:style {:display "flex"
-                   :margin-bottom 5}}
+    [:div {:style {:display "flex"}}
      (for [{:keys [color backgroundColor slug] :as tile*} (-> legend :tiles)]
        ^{:key slug}
        [tile {:selected?        (= slug (-> legend :selected :slug))
