@@ -1,0 +1,85 @@
+html {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    color: #171717;
+}
+
+.Logo {
+    font-family: 'Noto Serif KR', sans-serif;
+    color: #0000ff;
+    font-style: italic;
+    margin-left: 10px;
+    font-size: 18px;
+    margin-bottom: 25px;
+    letter-spacing: 0.06em;
+}
+
+.Tools {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 10px;
+    margin-bottom: 25px;
+}
+
+.Action {
+   border: none;
+   margin-right: 3px;
+   color: #444;
+   cursor: pointer;
+   padding: 5px 8px;
+   display: inline-block;
+   text-transform: uppercase;
+   letter-spacing: 1px;
+   font-weight: 600;
+   outline: none;
+   position: relative;
+   -webkit-transition: all 0.3s;
+   -moz-transition: all 0.3s;
+   transition: all 0.3s;
+}
+
+.Action:hover {
+    background-color: #0000ff;
+    color: white;
+}
+
+.Links {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: scroll;
+}
+
+.Link {
+    margin-bottom: 3px;
+    box-sizing: border-box;
+    margin-left: 10px;
+}
+
+.Link:hover {
+    cursor: pointer;
+    color: #0000ff;
+}
+
+.Link.active {
+    padding-left: 2px;
+    margin-left: 0;
+    border-left: 8px solid #0000ff;
+}
+
+.Sidebar {
+    position: fixed;
+    left: 0;
+    margin-top: -50px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Sidebar-container {
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    border-left: 8px solid #ffeb3b;
+}

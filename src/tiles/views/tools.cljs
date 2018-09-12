@@ -1,13 +1,11 @@
-(ns tiles.views.tools
+(ns tiles.views.sidebar
   (:require [artemis.document :as d]
             [tiles.store :as s]
             [re-frame.core :as rf]))
 
-(defn option [{:keys [text on-click]}]
-  [:div {:on-click on-click
-         :style {:font-size 16
-                 :color "#131313"
-                 :font-family "Georgia"}}
+(defn action [{:keys [text on-click]}]
+  [:button {:class    "Action"
+            :on-click on-click}
    text])
 
 (defn set-active-board [slug]
@@ -43,24 +41,24 @@
 
 (defn links []
   (let [query (d/parse-document "{ boards { slug }}")
-        slugs (:boards @(rf/subscribe [:read query]))]
+        slugs (:boards @(rf/subscribe [:read query]))
+        active-slug (-> @(rf/subscribe [:read (d/parse-document "{ currentBoard { slug } }")])
+                        :currentBoard :slug)]
     [:div
      (for [{:keys [slug]} slugs]
        ^{:key slug}
-       [:div {:on-click (fn [e]
-                          (set-active-board slug))}
+       [:div {:class    ["Link" (when (= slug active-slug) "active")]
+              :on-click #(set-active-board slug)}
         slug])]))
 
-(defn tools []
+(defn sidebar []
   (let []
-    [:div {:style {:position        "fixed"
-                   :left 0
-                   :height          "100%"
-                   :display         "flex"
-                   :justify-content "center"
-                   :align-items     "center"}}
-     [:div {:style {:height 500
-                    :border-left "5px solid #ffeb3b"
-                    :padding-left 10}}
-      [option {:text "New" :on-click create-new-board}]
-      [links]]]))
+    [:div {:class "Sidebar"}
+     [:div {:class "Sidebar-container"}
+      [:div {:class "Logo"} "Tiles."]
+      [:div {:class "Tools"}
+       [action {:text "new" :on-click create-new-board}]
+       [action {:text "undo" :on-click #(rf/dispatch [:undo])}]
+       [action {:text "redo" :on-click #(rf/dispatch [:redo])}]]
+      [:div {:class "Links"}
+       [links]]]]))

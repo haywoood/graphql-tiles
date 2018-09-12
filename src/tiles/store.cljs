@@ -7,8 +7,7 @@
             [debux.cs.core :refer-macros [clog]]
             [re-frame.core :as rf]))
 
-(defn gen-slug []
-  (.toString (random-uuid)))
+(def gen-slug #(str (gensym ". ") " /"))
 
 (def blank-tile
   "Our blank tile, used in colors and the blank-board creation"
